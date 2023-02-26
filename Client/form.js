@@ -37,4 +37,11 @@ $(document).ready(function() {
         // };
         // reader.readAsDataURL(file);
 
+
+        $('.carousel').carousel()
+
+
+
+
+
 });
