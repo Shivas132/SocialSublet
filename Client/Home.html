@@ -4,10 +4,7 @@
  <meta charset="utf-8">
  <meta name="viewport" content="width=device-width, initial-scale=1">
  <title>SocalSublet home</title>
- <link href="./Home.css" rel="stylesheet">
- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
-       rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
-       crossorigin="anonymous">
+ 
 <!-- jquery -->
 <script
   src="https://code.jquery.com/jquery-3.6.3.js"
@@ -27,6 +24,11 @@
 
 <!-- fullCalander -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js'></script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+       rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+       crossorigin="anonymous">
+       <link href="./Home.css" rel="stylesheet">
 
 </head>
 <body>
@@ -55,6 +57,59 @@
 
 </div>
 <div class="container" id="myGroup">
+<div class="collapse" id="collapseInfo" data-parent="#myGroup">
+  <!-- <div> -->
+  <div class="row ">
+    <div class="col-md-10 mx-auto">
+      <div class="card mt-5 mx-auto p-4 bg-light">
+          <div class="card-body bg-light">
+            <div class="row">
+              <div class="col md-6">
+            <div class="card-body">
+                <h5>name</h5>
+                <p class="card-text" id="cardName">Name</p>
+                <h5>Address</h5>
+                <p class="card-text" id="cardAddress">Address</p>
+                <h5>when?</h5>
+                <p class="card-text" id="cardDate">Start Date - End Date</p>
+                <h5>Phone Number</h5>
+                <p class="card-text" id="cardPhone"> Phone Number</p>
+                <h5>Email</h5>
+                <p class="card-text" id="cardEmail">Email</p>
+                <h5>More Information</h5>
+                <p class="card-text" id="cardInfo">moreInfo</p>
+            </div>
+            </div>
+            <div class="col md-6">
+              <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img class="d-block w-100" src="img/index.jpg" alt="First slide">
+                  </div>
+                  <div class="carousel-item">
+                    <img class="d-block w-100" src="img/put-together-a-perfect-guest-room-1976987-hero-223e3e8f697e4b13b62ad4fe898d492d.jpg" alt="Second slide">
+                  </div>
+                  <div class="carousel-item">
+                    <img class="d-block w-100" src="img/xjpg.jpg" alt="Third slide">
+                  </div>
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </div>  
+            </div>
+            </div>  
+          </div>
+              <button onclick="collapseAll()" type="button" id ="close" class="btn btn-primary mt-2"  >close</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
 <div class="collapse" id="collapseAbout" data-parent="#myGroup">
   <div class="row ">
@@ -62,7 +117,7 @@
       <div class="card mt-2 mx-auto p-4 bg-light">
           <div class="card-body bg-light">
            <h4>our goal goal is to make the sublet process in our comunnity easy and free</h4>
-           <button onclick="collapseAll()" type="button" id ="close" class="btn btn-primary mt-2"  >close</button>
+           <button onclick="collapseAll()" type="button" id ="close" class="btn btn-primary mt-2" >close</button>
           </div>
       </div>
     </div>
@@ -88,7 +143,7 @@
                   <div class="col-md-6">
                       <div class="form-group">
                           <label for="form_address">address</label>
-                          <input id="form_address" type="text" name="surname" class="form-control" placeholder="Please enter your address*"  data-error="address is required." required>
+                          <input id="form_address" type="text" name="address" class="form-control" placeholder="Please enter your address*"  data-error="address is required." required>
                       </div>
                   </div>
               </div>
@@ -129,7 +184,8 @@
                       <label for="form_images">Images *</label>
                       <form enctype="multipart/form-data" id="image-form">
                         <input type="file" name="image[]" multiple>
-                      </form>                      </div>
+                      </form>                     
+                     </div>
 
                 </div>
               </div>
@@ -160,34 +216,14 @@
 </div>
 </div>
 </div>
-<div class="d-flex justify-content-center p-3">
+<!-- <div class="d-flex justify-content-center p-3">
     <h1>ongoing sublets</h1>
-</div>
-<div class="container-fluid">
-<div class="row">
-  <div class="col-md-9 p-5"> 
+</div> -->
+<div class="container-fluid mt" style="width: 60%;">
      <div id="calendar"></div>
   </div>
-  <div class="col-md-3">
-    <div class="collapse" id="collapseInfo" data-parent="#myGroup">
-      <div class="row ">
-        <div class="col-md-10 mx-auto">
-          <div class="card mt-5 mx-auto p-4 bg-light">
-              <div class="card-body bg-light">
-              <div id="infoInner"><h4>click on event to get more information</h4></div>
-            </div>
-               <button onclick="collapseAll()" type="button" id ="close" class="btn btn-primary mt-2"  >close</button>
-              </div>
-          </div>
-        </div>
-    </div>
 </div>
 </div>
-</div>
-
-
-
-
 
 <script src="userData.js"></script>
 
