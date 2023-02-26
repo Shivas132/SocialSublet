@@ -10,7 +10,6 @@ const auth = firebaseAuth.getAuth(firebaseApp);
 
 const app = express(); 
 const path = require('path'); 
-const router = express.Router(); 
 
 app.use(express.static('Client'));
 app.use(
@@ -20,15 +19,12 @@ app.use(
 )
 
 var admin = require("firebase-admin");
-
 var serviceAccount = require("./key.json");
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
 const db = admin.firestore()
-
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
@@ -38,9 +34,6 @@ app.use(bodyParser.json());
 app.get('/',function(req,res){
   console.log("Login request");
   res.sendFile(path.join(__dirname, 'Client', 'Login.html'))
-
-    //res.sendFile(path.join(__dirname+'/Login.html'));
-    //__dirname : It will resolve to your project folder.
   });
   
   app.get('/SignUp',function(req,res){
@@ -57,8 +50,9 @@ app.get('/',function(req,res){
       res.sendFile(path.join(__dirname, 'Client', 'Home.html'))})
     .catch(function(error) {
     var errorCode = error.code;
-    var errorMessage = error.message;      
+    var errorMessage = error.message;
     console.log(error);
+    res.send(false);
     });
   });
 
@@ -104,7 +98,7 @@ app.get('/getEvents',async function(req,res){
     querySnapshot.forEach((doc) => {
       documents.push(doc.data());
     });
-    console.log(documents); // array of document objects
+    //console.log(documents); // array of document objects
   })
   .catch((error) => {
     console.log('Error getting documents: ', error);
@@ -112,6 +106,56 @@ app.get('/getEvents',async function(req,res){
   res.send(documents)
 });
 
-//add the router 
+
+
+
+app.post('/getUserProfile',async function(req,res){
+  const documents = [];
+  console.log(req.body);
+ res.sendFile(path.join(__dirname, 'Client', 'UserEvent.html'))
+  
+});
+
+
+app.post('/getUserEvents',async function(req,res){
+  const documents = [];
+  console.log(req.body);
+  email = req.body.email;
+  await db.collection("Events").where("email", "==" , email).get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      documents.push(doc.data());
+      });
+})
+.catch((error) => { 
+    console.log("Error getting documents: ", error);
+});
+console.log(documents);
+res.send(documents)
+
+});
+
+
+app.post('/deleteEvent',async function(req,res){
+  console.log(req.body);
+  console.log("----------------------");
+  console.log(req.body.email , " " , req.body.startDate," " ,req.body.endDate);
+  db.collection('Events').where('email', '==', req.body.email).where('start', '==', req.body.startDate).where('end' , '==' , req.body.endDate).get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(documentSnapshot => {
+        documentSnapshot.ref.delete();
+      });
+    console.log("delete secssed");
+    res.send(true);
+    })
+    .catch(error => {
+      console.error('Error deleting document: ', error);
+      res.send(false);
+    });  
+});
+
+
+
 app.listen(3000); 
 console.log('Running at Port 3000'); 
+

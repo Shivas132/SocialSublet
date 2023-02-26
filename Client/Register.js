@@ -1,7 +1,6 @@
 
 
 $(document).ready(function() {
- 
     $("#submit").click(function(){
         email  =   $("#email").val();
         password  =   $("#password").val();
@@ -18,7 +17,7 @@ $(document).ready(function() {
               window.location.href = "/Home.html";
             }
             else{
-              alert("Wrong password or email");
+              alert("Email all ready exist");
             }
         }
         });
