@@ -1,12 +1,13 @@
 
 const express = require('express'); 
-
 const firebase  = require('firebase/app');
 const firebaseAuth  = require('firebase/auth');
 const fireStore = require('firebase/firestore')
 var firebaseConfig = require('./firebaseConfig');
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const auth = firebaseAuth.getAuth(firebaseApp);
+
+const BUCKET_URL = "gs://web-project-51e3f.appspot.com/"
 
 const app = express(); 
 const path = require('path'); 
@@ -21,8 +22,10 @@ app.use(
 var admin = require("firebase-admin");
 var serviceAccount = require("./key.json");
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
+  storageBucket: "web-project-51e3f.appspot.com"
 });
+const bucket = admin.storage().bucket();
 
 const db = admin.firestore()
 const bodyParser = require('body-parser');
@@ -73,21 +76,92 @@ app.get('/',function(req,res){
         res.send(false);
       });
  });
+ const formidable = require('formidable');
 
 
  app.post('/addEvent', function(req, res) { 
 
   var myData = req.body;
-  console.log(myData)
-  collectionRef = db.collection('Events');
-  collectionRef.add(myData)
-  .then((docRef) => {
-    console.log(`Document written with ID: ${docRef.id}`);
-  })
-  .catch((error) => {
-    console.error('Error adding document: ', error);
-  });
-  console.log('x');
+  
+  // const formDataObj = {};
+  // myData.forEach((value, key) => (formDataObj[key] = value));
+   const form = formidable({ multiples: true });
+    form.parse(req, (err, fields, files) => {
+        console.log('fields: ', fields);
+        console.log('files: ', files);
+        const fileUploadPromises = Object.keys(files).map((fileKey) => {
+          const file = files[fileKey];
+          const filePath = file.path;
+          const fileDestination = `uploads/${file.name}`;
+    
+          const fileStream = bucket.file(fileDestination).createWriteStream({
+            metadata: {
+              contentType: file.type,
+              cacheControl: "public, max-age=31536000",
+            },
+          });
+    
+          return new Promise((resolve, reject) => {
+            fileStream.on("error", (error) => {
+              reject(error);
+            });
+    
+            fileStream.on("finish", () => {
+              // Get the download URL of the uploaded file
+              const fileRef = bucket.file(fileDestination);
+              fileRef
+                .getSignedUrl({
+                  action: "read",
+                  expires: "03-01-2500",
+                })
+                .then((signedUrls) => {
+                  const fileUrl = signedUrls[0];
+                  resolve({ fileDestination, fileUrl });
+                })
+                .catch((error) => {
+                  reject(error);
+                });
+            });
+    
+            const fileReadStream = fs.createReadStream(filePath);
+            fileReadStream.pipe(fileStream);
+          });
+        });
+    
+        // Wait for all file uploads to complete before sending response
+        Promise.all(fileUploadPromises)
+          .then((fileInfos) => {
+            console.log("Files uploaded to Firebase Storage:", fileInfos);
+    
+            // Do something with the file destinations and URLs, e.g. store in database
+            // ...
+    
+            res.send("Files uploaded successfully");
+          })
+          .catch((error) => {
+            console.error(`Error uploading files to Firebase Storage: ${error}`);
+            res.status(500).send("Error uploading files to Firebase Storage");
+          });
+      });
+    });
+        collectionRef = db.collection('Events');
+        collectionRef.add(fields)         
+        .then((docRef) => {
+          console.log(`Document written with ID: ${docRef.id}`);
+        })
+        .catch((error) => {
+          console.error('Error adding document: ', error);
+      });
+    });
+  // console.log(req)
+  // collectionRef = db.collection('Events');
+  // collectionRef.add(myData)
+  // .then((docRef) => {
+  //   console.log(`Document written with ID: ${docRef.id}`);
+  // })
+  // .catch((error) => {
+  //   console.error('Error adding document: ', error);
+  // });
   res.json({ message: "yay" });
 });
 
