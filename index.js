@@ -79,7 +79,7 @@ app.get('/',function(req,res){
 
 
 
- app.post('/addEvent', function(req, res) { 
+  app.post('/addEvent', async function(req, res) { 
 
   updatePhoto(req);  
   res.json({ message: "yay" });
@@ -148,79 +148,84 @@ app.post('/deleteEvent',async function(req,res){
     });  
 });
 
-function updatePhoto(req ){
-  var EventFields;
+function updatePhoto(req) {
+  var EventFields = {};
   const imagesArray = [];
   const form = new formidable.IncomingForm();
-// Parse the FormData object
+  // Parse the FormData object
   form.parse(req, (err, fields, files) => {
     if (err) {
       console.error('Error parsing form data:', err);
       return res.status(500).send('Error parsing form data.');
     }
-    EventFields = JSON.stringify(fields);
+    EventFields = fields;
 
     // Upload each file to Firestore Storage
-    counter=1;
+    counter = 1;
     const currentDate = new Date();
-    dateForFile = currentDate.getDate() +"-"+currentDate.getMonth();
-    Object.values(files).forEach((file) => {
-      fileName = fields.email + "-" +counter + "-" + dateForFile + ".jpg";
+    dateForFile = currentDate.getDate() + "-" + currentDate.getMonth();
+    const promises = Object.values(files).map((file) => {
+      fileName = fields.email + "-" + counter + "-" + dateForFile + ".jpg";
       filePath = file.filepath;
-      counter +=1
-      console.log("file name = " , fileName);
-      console.log("file path = " , file.filepath);
+      counter += 1;
+      //console.log("file name = ", fileName);
+      //console.log("file path = ", file.filepath);
       const fileUpload = bucket.file(fileName);
 
-//      Create a read stream from the file path
+      // Create a read stream from the file path
       const readStream = require('fs').createReadStream(filePath);
 
-      // // Pipe the read stream to the file upload stream
-      readStream.pipe(fileUpload.createWriteStream({
-        // Define metadata for the file (optional)
-        metadata: {
-          contentType: file.type,
+      // Pipe the read stream to the file upload stream
+      readStream.pipe(
+        fileUpload.createWriteStream({
+          // Define metadata for the file (optional)
           metadata: {
-            custom: 'metadata'
-          }
-        }
-      }));
+            contentType: file.type,
+            metadata: {
+              custom: 'metadata',
+            },
+          },
+        })
+      );
 
-      bucket.file(fileName).getSignedUrl({
-        action: 'read',
-        expires: '03-01-2024' // An expiration date in the future
-      })
-      .then((url) => {
-        console.log(`The download URL for ${fileName} is ${url[0]}.`);
-        var tmp = url[0];
-       imagesArray.push(tmp); 
-
-      })
-      .catch((error) => {
-        console.error(`Error getting download URL for ${fileName}.`, error);
-      });
-      
+      return bucket
+        .file(fileName)
+        .getSignedUrl({
+          action: 'read',
+          expires: '03-01-2024', // An expiration date in the future
+        })
+        .then((url) => {
+          //console.log(`The download URL for ${fileName} is ${url[0]}.`);
+          const tmp = url[0];
+          imagesArray.push(tmp)
+          //imagesArray.push(tmp);
+        })
+        .catch((error) => {
+          console.error(`Error getting download URL for ${fileName}.`, error);
+        });
     });
-    
 
-
-    //return res.status(200).send('File(s) uploaded successfully.');
+    Promise.all(promises).then(() => {
+      EventFields.imagesArray = imagesArray;
+      //console.log("EventFields function add image  -- > ", EventFields);
+      updateEvent(EventFields);
+    });
   });
-  console.log("imagesArray --> " ,  imagesArray);
 
+  
 }
 
-function updateEvent(fields){
+
+function updateEvent(EventFields){
+  console.log("EventFields function updateEvent  -- > ", EventFields);
   collectionRef = db.collection('Events');
-  collectionRef.add(fields)         
+  collectionRef.add(EventFields)         
   .then((docRef) => {
     console.log(`Document written with ID: ${docRef.id}`);
   })
   .catch((error) => {
     console.error('Error adding document: ', error);
 });
-
-
 }
 
 app.listen(3000); 

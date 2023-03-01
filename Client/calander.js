@@ -2,7 +2,7 @@ $(document).ready(async function() {
     var serverEvents = NaN
     await $.get('/getEvents', function(data) {
         serverEvents = data
-        console.log(serverEvents)
+        console.log("serverEvents -- > " ,serverEvents)
 
           }).fail(function(xhr, status, error) {
         console.error('Failed to get events from server error:', error);
@@ -14,8 +14,10 @@ $(document).ready(async function() {
       events : serverEvents,
     eventClick: function(info) {
          info.jsEvent.preventDefault(); // don't let the browser navigate
-         console.log(info.event)
+         console.log(info.event.extendedProps)
          $("#collapseInfo").collapse('hide')
+         gallery = $("#gallery");
+         counter = 0;
          setTimeout(() => {
           $("#cardAddress").html(info.event.extendedProps.address)
           $("#cardName").html(info.event.extendedProps.hosts_name)
@@ -23,8 +25,18 @@ $(document).ready(async function() {
           $("#cardEmail").html(info.event.extendedProps.email)
           $("#cardDate").html(changeDateFormat(info.event.start)+" - "+changeDateFormat(info.event.end))
           $("#cardInfo").html(info.event.extendedProps.messege)
-           
-         }, 200);
+          info.event.extendedProps.imagesArray.forEach((image ) => {
+            if(counter == 0){
+              gallery.append("<div class=\"carousel-item active\"> <img class=\"d-block w-100\" src= \"" + image + "\"> </div>");
+              counter++;
+            }
+            else {
+              gallery.append("<div class=\"carousel-item \"> <img class=\"d-block w-100\" src= \"" + image + "\"> </div>");
+            }
+
+
+          });
+        }, 200);
          setTimeout(() => { $("#collapseInfo").collapse('show') }, 500);
          }
     });
@@ -88,20 +100,20 @@ $(document).ready(async function() {
                 fileInput :files
         }        
         console.log( JSON.stringify(subletData))
-        $.ajax({
-            method: "POST",
-            url: "/addEvent",
-            data: JSON.stringify(subletData),
-            contentType: "application/json; charset=utf-8",
-            success: function(response){
-                console.log(response); 
-            },
-            error: function (err) {
-                alert("x")
-         }
-        });
-        console.log(subletData)
-        calendar.addEvent(subletData)
+        // $.ajax({
+        //     method: "POST",
+        //     url: "/addEvent",
+        //     data: JSON.stringify(subletData),
+        //     contentType: "application/json; charset=utf-8",
+        //     success: function(response){
+        //         console.log(response); 
+        //     },
+        //     error: function (err) {
+        //         alert("x")
+        //  }
+        // });
+        // console.log(subletData)
+        // calendar.addEvent(subletData)
 
 
 
