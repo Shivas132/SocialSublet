@@ -20,14 +20,14 @@ await $.post('/getUserEvents', {email:email},function(data) {
     var $card = $("<div>", { class: "card" });
     var $cardTitle = $("<h2>", { text: card.title });
     var $cardDescription = $("<p>", { text: card.messege });
-    var $cardStartDate = $("<h2>", { text: card.start });
-    var $cardEndDate = $("<h2>", { text: card.end });
+    var $cardStartDate = $("<h2>", { text: changeDateFormat(new Date(card.start)) });
+    var $cardEndDate = $("<h2>", { text: changeDateFormat(new Date(card.end)) });
     var $cardDeleteButton = $("<button >", {id:"delete" ,  text: "delete" , "data-card-index": index_card });
-    var $index = $("<p>", { text: index_card });
+    // var $index = $("<p>", { text: index_card });
     index_card = index_card+1;
 
     
-    $card.append($index,$cardTitle, $cardDescription , $cardStartDate, $cardEndDate , $cardDeleteButton);
+    $card.append($cardTitle, $cardDescription , $cardStartDate, $cardEndDate , $cardDeleteButton);
     $cardsContainer.append($card);
     
   });
@@ -37,17 +37,11 @@ await $.post('/getUserEvents', {email:email},function(data) {
   $(document).on("click", "#delete", function () {
     const cardIndex = $(this).data("card-index");
     const card = userEvents[cardIndex];
-    handleCardClick(card);
-  });
-
-  // Function to handle card click
-  function handleCardClick(card) {
     email = localStorage.getItem("email");
-    console.log(card);
     $.ajax({
       method: "POST",
       url: "/deleteEvent",
-      data: { email:email , startDate: card.start, endDate: card.end },
+      data: { id : card.id },
       success: function(response){
         //if request if made successfully then the response represent the data
         if(response){
@@ -58,6 +52,14 @@ await $.post('/getUserEvents', {email:email},function(data) {
         }
     }
     });
-  }
+  });
 });
+
+function changeDateFormat(dateObj){
+  day = dateObj.getDay()
+  month = dateObj.getMonth()
+  year = dateObj.getFullYear()
+  return day+"/"+month+"/"+year
+}
+
 

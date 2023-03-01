@@ -27,11 +27,11 @@ $(document).ready(async function() {
           $("#cardInfo").html(info.event.extendedProps.messege)
           info.event.extendedProps.imagesArray.forEach((image ) => {
             if(counter == 0){
-              gallery.append("<div class=\"carousel-item active\"> <img class=\"d-block w-100\" src= \"" + image + "\"> </div>");
+              gallery.append("<div class=\"carousel-item active\"> <img class=\"d-block w-100\" src= \"" + image.img_url + "\"> </div>");
               counter++;
             }
             else {
-              gallery.append("<div class=\"carousel-item \"> <img class=\"d-block w-100\" src= \"" + image + "\"> </div>");
+              gallery.append("<div class=\"carousel-item \"> <img class=\"d-block w-100\" src= \"" + image.img_url+ "\" alt = \"apparment images\"> </div>");
             }
 
 
@@ -52,6 +52,7 @@ $(document).ready(async function() {
       const formData = new FormData();
       Array.from(files).forEach(function(file) {
         console.log("Array - " , file);
+        
         formData.append('user-file' + counter, file, 'user-file'+ counter+'.jpg')
         counter=counter+1;
       });
@@ -70,11 +71,28 @@ $(document).ready(async function() {
      
 
         form_name =  $("#form_name").val()
-        start_date = $("#startDate").val()
-        end_date =  $("#endDate").val()
+        start_date = new Date($("#startDate").val())
+        end_date =  new Date($("#endDate").val())
         form_phone= $("#phone").val()
         form_messege=  $("#form_message").val()
         form_address = $("#form_address").val()
+
+
+        current_date = new Date();
+
+        if(start_date.getTime() >= end_date.getTime()){
+          console.log("start date is not equal");
+          alert("start date cant be equal or after the end date")
+          return
+        }
+        if(start_date.getTime() < current_date.getTime()){
+          console.log("start date is not equal");
+          alert("start date cant be before today")
+          return
+        }
+
+
+
 
         formData.append('address', form_address)
         formData.append('title', form_name + '\'s place')
@@ -128,7 +146,7 @@ $(document).ready(async function() {
 
         const formDataObj = {};
         formData.forEach((value, key) => (formDataObj[key] = value));
-        calendar.addEvent(formDataObj)    
+        // calendar.addEvent(formDataObj)    
         $('#myform')[0].reset();
         $('#added').collapse('show')
   

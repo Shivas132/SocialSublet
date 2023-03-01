@@ -13,8 +13,8 @@ const bodyParser = require('body-parser');
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const auth = firebaseAuth.getAuth(firebaseApp);
 const BUCKET_URL = "gs://web-project-51e3f.appspot.com/"
-
 const app = express(); 
+
 app.use(bodyParser.json());
 app.use(express.static('Client'));
 app.use(
@@ -30,8 +30,6 @@ admin.initializeApp({
 
 const bucket = admin.storage().bucket();
 const db = admin.firestore();
-
-
 
 
 app.get('/',function(req,res){
@@ -113,7 +111,7 @@ app.post('/getUserProfile',async function(req,res){
 
 app.post('/getUserEvents',async function(req,res){
   const documents = [];
-  console.log(req.body);
+  // console.log(req.body);
   email = req.body.email;
   await db.collection("Events").where("email", "==" , email).get()
   .then((querySnapshot) => {
@@ -124,7 +122,7 @@ app.post('/getUserEvents',async function(req,res){
 .catch((error) => { 
     console.log("Error getting documents: ", error);
 });
-console.log(documents);
+// console.log(documents);
 res.send(documents)
 
 });
@@ -134,18 +132,45 @@ app.post('/deleteEvent',async function(req,res){
   console.log(req.body);
   console.log("----------------------");
   console.log(req.body.email , " " , req.body.startDate," " ,req.body.endDate);
-  db.collection('Events').where('email', '==', req.body.email).where('start', '==', req.body.startDate).where('end' , '==' , req.body.endDate).get()
-    .then(querySnapshot => {
-      querySnapshot.forEach(documentSnapshot => {
-        documentSnapshot.ref.delete();
-      });
-    console.log("delete secssed");
-    res.send(true);
+  // db.collection('Events').where('email', '==', req.body.email).where('start', '==', req.body.startDate).where('end' , '==' , req.body.endDate).get()
+  
+  docRec = db.collection('Events').doc(req.body.id)
+  await docRec.get().then(documentSnapshot =>{
+    imagesArray = documentSnapshot.get('imagesArray')
+    imagesArray.forEach(img=>{
+      bucket.file(img.img_name).delete()
+      .then(()=>{
+        console.log(img.img_name + " deleted")
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
     })
-    .catch(error => {
-      console.error('Error deleting document: ', error);
-      res.send(false);
-    });  
+  })
+  
+  docRec.delete()
+  .then(()=>{
+    console.log("deleted")
+    res.send(true);
+})
+  .catch((err)=>{
+    console.log(err)
+    res.send(false);
+  })
+
+ 
+  // .then(querySnapshot => {
+  //     // querySnapshot.forEach(documentSnapshot => {
+  //       console.log("x =" + querySnapshot)
+  //       querySnapshot.ref.delete();
+  //     // });
+  //   console.log("delete secssed");
+  //   res.send(true);
+  //   })
+  //   .catch(error => {
+  //     console.error('Error deleting document: ', error);
+  //     res.send(false);
+  //   });  
 });
 
 function updatePhoto(req) {
@@ -162,10 +187,12 @@ function updatePhoto(req) {
 
     // Upload each file to Firestore Storage
     counter = 1;
-    const currentDate = new Date();
-    dateForFile = currentDate.getDate() + "-" + currentDate.getMonth();
+    // dateForFile = currentDate.getDate() + "-" + currentDate.getMonth();
+    // console.log(files);
+
     const promises = Object.values(files).map((file) => {
-      fileName = fields.email + "-" + counter + "-" + dateForFile + ".jpg";
+      console.log("name="+file.newFilename)
+      let fileName = fields.email +"-"+ file.newFilename+".jpg";
       filePath = file.filepath;
       counter += 1;
       //console.log("file name = ", fileName);
@@ -196,7 +223,11 @@ function updatePhoto(req) {
         })
         .then((url) => {
           //console.log(`The download URL for ${fileName} is ${url[0]}.`);
-          const tmp = url[0];
+          
+          const tmp = {
+            img_url: url[0],
+            img_name : fileName
+          }
           imagesArray.push(tmp)
           //imagesArray.push(tmp);
         })
@@ -222,6 +253,9 @@ function updateEvent(EventFields){
   collectionRef.add(EventFields)         
   .then((docRef) => {
     console.log(`Document written with ID: ${docRef.id}`);
+    collectionRef.doc(docRef.id).update({
+      id : docRef.id
+    })
   })
   .catch((error) => {
     console.error('Error adding document: ', error);
