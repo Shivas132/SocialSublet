@@ -34,12 +34,21 @@ $(document).ready(async function() {
     $("#myform").submit(function(e)    
     {
       e.preventDefault()
-      const userFile = document.getElementById('file').files[0]
-
+      var input = $('#file')[0];
+      var files = input.files;
+      counter = 0;
       const formData = new FormData();
-      if(userFile){
-      formData.append('user-file', userFile, 'user-file.jpg')
-      }
+      Array.from(files).forEach(function(file) {
+        console.log("Array - " , file);
+        formData.append('user-file' + counter, file, 'user-file'+ counter+'.jpg')
+        counter=counter+1;
+      });
+      console.log("counter = "  , counter);
+      
+      
+
+
+
       // const fileInput = document.querySelector('input[type="file"]');
       // const files = fileInput.files;
       // for (let i = 0; i < files.length; i++) {
@@ -66,33 +75,37 @@ $(document).ready(async function() {
         formData.append('backgroundColor', getRandomColor())
         
 
-        // var subletData = {
-        //         address : form_address,
-        //         title : form_name + '\'s place',
-        //         start : start_date,
-        //         end : end_date,
-        //         phone: form_phone,
-        //         hosts_name: form_name,
-        //         messege: form_messege, 
-        //         email: localStorage.getItem('email'),
-        //         backgroundColor : getRandomColor(),
-        //         fileInput :files
-        // }        
-        // console.log( JSON.stringify(subletData))
-        // $.ajax({
-        //     method: "POST",
-        //     url: "/addEvent",
-        //     data: JSON.stringify(subletData),
-        //     contentType: "application/json; charset=utf-8",
-        //     success: function(response){
-        //         console.log(response); 
-        //     },
-        //     error: function (err) {
-        //         alert("x")
-        //  }
-        // });
-        // console.log(subletData)
-        // calendar.addEvent(subletData)
+        var subletData = {
+                address : form_address,
+                title : form_name + '\'s place',
+                start : start_date,
+                end : end_date,
+                phone: form_phone,
+                hosts_name: form_name,
+                messege: form_messege, 
+                email: localStorage.getItem('email'),
+                backgroundColor : getRandomColor(),
+                fileInput :files
+        }        
+        console.log( JSON.stringify(subletData))
+        $.ajax({
+            method: "POST",
+            url: "/addEvent",
+            data: JSON.stringify(subletData),
+            contentType: "application/json; charset=utf-8",
+            success: function(response){
+                console.log(response); 
+            },
+            error: function (err) {
+                alert("x")
+         }
+        });
+        console.log(subletData)
+        calendar.addEvent(subletData)
+
+
+
+
         fetch("/addEvent", {
             method : "POST",
             body : formData
