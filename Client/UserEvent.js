@@ -22,8 +22,6 @@ await $.post('/getUserEvents', {email:email},function(data) {
     var $cardDescription = $("<p>", { text: card.messege });
     var $cardDate = $("<h2>", { text: changeDateFormat(card.start) +" - " + changeDateFormat(card.end) });
 
-    // var $cardStartDate = $("<h2>", { text: changeDateFormat(card.start) });
-    // var $cardEndDate = $("<h2>", { text: changeDateFormat(card.end) });
     var $cardDeleteButton = $("<button >", {id:"delete" ,  text: "delete" , "data-card-index": index_card });
     // var $index = $("<p>", { text: index_card });
     index_card = index_card+1;
@@ -54,6 +52,16 @@ await $.post('/getUserEvents', {email:email},function(data) {
         }
     }
     });
+  });
+  $(function() {
+    $( "#startDate" ).datepicker({
+        dateFormat: "yy-mm-dd"
+    });
+  });
+  $(function() {
+      $("#endDate" ).datepicker({
+          dateFormat: "yy-mm-dd"
+      });
   });
 });
 

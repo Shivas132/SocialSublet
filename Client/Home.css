@@ -5,4 +5,6 @@
 	border-color: black;
 	position: center;
 }
-
+.nav-item {
+	font-size: 24px;
+  }

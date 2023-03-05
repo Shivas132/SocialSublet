@@ -2,10 +2,10 @@ $(document).ready(async function() {
     var serverEvents = NaN
     await $.get('/getEvents', function(data) {
         serverEvents = data
-        console.log("serverEvents -- > " ,serverEvents)
-
+        // console.log("serverEvents -- > " ,serverEvents)
           }).fail(function(xhr, status, error) {
-        console.error('Failed to get events from server error:', error);
+        // console.error('Failed to get events from server error:', error);
+        alert('Failed to get events from server error:', error);
       });
     var calendarEl = document.getElementById('calendar');
     let calendar = new FullCalendar.Calendar(calendarEl, {
@@ -14,9 +14,8 @@ $(document).ready(async function() {
       events : serverEvents,
       aspectRatio: setRatio(),
 
-
     eventClick: function(info) {
-         info.jsEvent.preventDefault(); // don't let the browser navigate
+         info.jsEvent.preventDefault();
          console.log(info.event.extendedProps)
          $("#collapseInfo").collapse('hide')
          gallery = $("#gallery");
@@ -37,42 +36,28 @@ $(document).ready(async function() {
               gallery.append("<div class=\"carousel-item \"> <img class=\"d-block w-100\" src= \"" + image.img_url+ "\" alt = \"apparment images\"> </div>");
             }
 
-
           });
+          if(counter==0){gallery.hide()}
+          else{gallery.show()}
         }, 200);
-         setTimeout(() => { $("#collapseInfo").collapse('show') }, 500);
-         }
+        setTimeout(() => { $("#collapseInfo").collapse('show') }, 400);
+        window.scrollTo(0, 0);
+        }
     });
     calendar.render();
     // $("#collapseInfo").collapse('show')
 
-    $("#myform").submit(function(e)    
+    $("#myform").submit(async function(e)    
     {
       e.preventDefault()
       var input = $('#file')[0];
       var files = input.files;
       counter = 0;
       const formData = new FormData();
-      Array.from(files).forEach(function(file) {
-        console.log("Array - " , file);
-        
+      Array.from(files).forEach(function(file) {       
         formData.append('user-file' + counter, file, 'user-file'+ counter+'.jpg')
         counter=counter+1;
       });
-      console.log("counter = "  , counter);
-      
-      
-
-
-
-      // const fileInput = document.querySelector('input[type="file"]');
-      // const files = fileInput.files;
-      // for (let i = 0; i < files.length; i++) {
-      //   const file = files[i];
-      //   console.log(file);
-      // }
-     
-
         form_name =  $("#form_name").val()
         start_date = $("#startDate").val()
         end_date =  $("#endDate").val()
@@ -85,18 +70,13 @@ $(document).ready(async function() {
         startDateChecker = new Date(start_date)
         endDateChecker = new Date(end_date)
         if(startDateChecker.getTime() >= endDateChecker.getTime()){
-          console.log("start date is not equal");
           alert("start date cant be equal or after the end date")
           return
         }
         if(startDateChecker.getTime() < current_date.getTime()){
-          console.log("start date is not equal");
           alert("start date cant be before today")
           return
         }
-
-
-
 
         formData.append('address', form_address)
         formData.append('title', form_name + '\'s place')
@@ -108,53 +88,30 @@ $(document).ready(async function() {
         formData.append('email',localStorage.getItem('email'))
         formData.append('backgroundColor', getRandomColor())
         
-
-        var subletData = {
-                address : form_address,
-                title : form_name + '\'s place',
-                start : start_date,
-                end : end_date,
-                phone: form_phone,
-                hosts_name: form_name,
-                messege: form_messege, 
-                email: localStorage.getItem('email'),
-                backgroundColor : getRandomColor(),
-                fileInput :files
-        }        
-        console.log( JSON.stringify(subletData))
-        // $.ajax({
-        //     method: "POST",
-        //     url: "/addEvent",
-        //     data: JSON.stringify(subletData),
-        //     contentType: "application/json; charset=utf-8",
-        //     success: function(response){
-        //         console.log(response); 
-        //     },
-        //     error: function (err) {
-        //         alert("x")
-        //  }
-        // });
-        // console.log(subletData)
-        // calendar.addEvent(subletData)
-
-
-
-
         fetch("/addEvent", {
             method : "POST",
             body : formData
         })
-        .then( res => res.json())
-        .then(data => console.log(data))
-        .catch(err => console.log(err))
+      
+        .then((data)=> console.log(data))
+        .then(()=>{
+          $('#myform')[0].reset();
+          $('#added').collapse('show');
+          $('#collapseForm').collapse('hide')
+        })
+  
+      })
 
-        const formDataObj = {};
-        formData.forEach((value, key) => (formDataObj[key] = value));
-        // calendar.addEvent(formDataObj)    
-        $('#myform')[0].reset();
-        location.reload();
-        $('#added').collapse('show')
-    })    
+      $(function() {
+        $( "#startDate" ).datepicker({
+            dateFormat: "yy-mm-dd"
+        });
+     });
+      $(function() {
+          $("#endDate" ).datepicker({
+              dateFormat: "yy-mm-dd"
+          });
+      });    
   });
   
   function changeDateFormat(dateObj){
@@ -167,7 +124,8 @@ $(document).ready(async function() {
 
   function collapseAll(){
     $('.collapse').collapse('hide')
-}
+  }
+
 function getRandomColor() {
     var letters = '0123456789ABCDEF';
     var color = '#';

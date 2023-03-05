@@ -1,15 +1,15 @@
 $(document).ready(function() {
 
-    $(function() {
-        $( "#startDate" ).datepicker({
-            dateFormat: "yy-mm-dd"
-        });
-    });
-    $(function() {
-        $("#endDate" ).datepicker({
-            dateFormat: "yy-mm-dd"
-        });
-    });
+    // $(function() {
+    //     $( "#startDate" ).datepicker({
+    //         dateFormat: "yy-mm-dd"
+    //     });
+    // });
+    // $(function() {
+    //     $("#endDate" ).datepicker({
+    //         dateFormat: "yy-mm-dd"
+    //     });
+    // });
     // $("#submit").click(function(){
     //     var newEvent={
     //         title : $("#form_name").val(),
@@ -38,7 +38,7 @@ $(document).ready(function() {
         // reader.readAsDataURL(file);
 
 
-        $('.carousel').carousel()
+        // $('.carousel').carousel()
 
 
 
