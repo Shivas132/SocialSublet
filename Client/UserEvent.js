@@ -20,14 +20,16 @@ await $.post('/getUserEvents', {email:email},function(data) {
     var $card = $("<div>", { class: "card" });
     var $cardTitle = $("<h2>", { text: card.title });
     var $cardDescription = $("<p>", { text: card.messege });
-    var $cardStartDate = $("<h2>", { text: changeDateFormat(new Date(card.start)) });
-    var $cardEndDate = $("<h2>", { text: changeDateFormat(new Date(card.end)) });
+    var $cardDate = $("<h2>", { text: changeDateFormat(card.start) +" - " + changeDateFormat(card.end) });
+
+    // var $cardStartDate = $("<h2>", { text: changeDateFormat(card.start) });
+    // var $cardEndDate = $("<h2>", { text: changeDateFormat(card.end) });
     var $cardDeleteButton = $("<button >", {id:"delete" ,  text: "delete" , "data-card-index": index_card });
     // var $index = $("<p>", { text: index_card });
     index_card = index_card+1;
 
     
-    $card.append($cardTitle, $cardDescription , $cardStartDate, $cardEndDate , $cardDeleteButton);
+    $card.append($cardTitle, $cardDescription , $cardDate , $cardDeleteButton);
     $cardsContainer.append($card);
     
   });
@@ -56,10 +58,10 @@ await $.post('/getUserEvents', {email:email},function(data) {
 });
 
 function changeDateFormat(dateObj){
-  day = dateObj.getDay()
-  month = dateObj.getMonth()
+  dateObj = new Date(dateObj)
+  day = dateObj.getDate()
+  month = dateObj.getMonth() +1
   year = dateObj.getFullYear()
   return day+"/"+month+"/"+year
 }
-
 
