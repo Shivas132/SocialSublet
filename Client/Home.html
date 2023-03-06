@@ -41,7 +41,7 @@
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-      </button>
+    </button>
     <div class="collapse navbar-collapse " id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item ml-50">
@@ -49,13 +49,13 @@
         </li>
         <li class="nav-item x">
           <a class="nav-link active h1 " data-toggle="collapse" href="#collapseAbout" role="button" aria-expanded="false" aria-controls="collapseAbout">
-            <p class="my-p">about the project</p></a>
+           About The Project</a>
         </li>
         <li class="nav-item x">
-          <a class="nav-link active h1 my-p" data-toggle="collapse" href="#collapseForm" role="button" aria-expanded="false" aria-controls="collapseForm">sublet your apartment</a>
+          <a class="nav-link active h1 my-p" data-toggle="collapse" href="#collapseForm" role="button" aria-expanded="false" aria-controls="collapseForm">Sublet Your Apartment</a>
         </li>
         <li class="nav-item active x">
-          <a id="userEvents" class="nav-link active h1 my-p" role="button">your sublets</a>
+          <a id="userEvents" class="nav-link active h1 my-p" role="button">Your Sublets</a>
         </li>
       </ul>
     </div>
@@ -126,7 +126,12 @@
     <div class="col-lg-10 mx-auto">
       <div class="card mt-2 mx-auto p-4 bg-light">
           <div class="card-body bg-light">
-           <h4>our goal goal is to make the sublet process in our comunnity easy and free</h4>
+            <h4>
+              Welcome to our project!<br>
+              Social Sublet is a platform allows people in our community to sublet their apartments for free.<br>
+              We believe in making the process of subletting simple and secure for everyone involved.<br><br>
+              click on any event in the calander below to see more details about this sublet.<br>
+            </h4>
            <button onclick="collapseAll()" type="button" id ="close" class="btn btn-primary mt-2" >close</button>
           </div>
       </div>
@@ -144,14 +149,14 @@
               <div class="controls">
               <div class="row">
                   <div class="col-md-6">
-                      <div class="form-group">
+                    <div class="form-group">
                           <label for="form_name">your name</label>
                           <input id="form_name" type="text" name="name" class="form-control" placeholder="Please enter your name *" data-error="name is required." required>
                           
                       </div>
                   </div>
                   <div class="col-md-6">
-                      <div class="form-group">
+                    <div class="form-group">
                           <label for="form_address">address</label>
                           <input id="form_address" type="text" name="address" class="form-control" placeholder="Please enter your address*"  data-error="address is required." required>
                       </div>
@@ -159,13 +164,13 @@
               </div>
               <div class="row">
                 <div class="col-md-6">
-                    <div class="form-group">
+                  <div class="form-group mt-md-3">
                         <label for="startDate">start date</label>
                         <input id="startDate" type="text" name="name" class="form-control" placeholder="Please enter start date *"  data-error="start date is required." autocomplete="off" required>       
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group">
+                  <div class="form-group mt-md-3">
                       <label for="endDate">end date</label>
                       <input id="endDate" type="text" name="name" class="form-control" placeholder="Please enter end date *"  data-error="end date is required." autocomplete="off" required>
                     </div>
@@ -173,7 +178,7 @@
             </div>
               <div class="row">
                 <div class="col-md-6">
-                  <div class="form-group">
+                  <div class="form-group mt-md-3">
                     <label for="phone">Phone Number:</label>
                     <input type="text" id="phone" class="form-control" name="phone" placeholder="Please tour phone number' format:05********" pattern="[0]{1}[5]{1}[0-9]{1}[0-9]{7}" required>
                   </div>
@@ -181,7 +186,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <div class="form-group">
+                  <div class="form-group mt-md-3">
                         <label for="form_message">Message *</label>
                         <textarea id="form_message" name="message" class="form-control" placeholder="Write any other information here." rows="4" ></textarea>
                       </div>
@@ -189,8 +194,9 @@
               </div>
               <div class="row">
                 <div class="col-md-12">
-                  <div class="form-group">
-                    <input type="file" id="file" accept=".png,.jpeg" multiple> .png / .jpeg only</input>                  
+                  <div class="form-group mt-md-3">
+                    <input type="file" id="file" accept=".png,.jpeg" multiple></input>   
+                    <p>.png / .jpeg only</p>               
                   </div>
                 </div>
               </div>
@@ -208,20 +214,20 @@
 </div>
   </div>
 </div>
-<!-- <div class="collapse" id="added" data-parent="#myGroup">
+<div class="collapse" id="added" data-parent="#myGroup">
   <div class="row ">
     <div class="col-lg-7 mx-auto">
       <div class="card mt-2 mx-auto p-4 bg-light">
           <div class="card-body bg-light">
            <h4>your sublet added succucesfuly! </h4>
-           <h4>if you want to see youre event refresh the page :) </h4>
+           <h4>you will see it in a few secondes:) </h4>
 
            <button type="button"  class="btn btn-primary mt-2" onclick="collapseAll()" >close</button>
           </div>
       </div>
     </div>
 </div>
-</div> -->
+</div>
 </div>
 
 <br>
@@ -233,12 +239,11 @@
     </div>
   </div>
 
-<script src="UserData.js"></script>
-<script src="calander.js"></script>
-<script src="form.js"></script>
+
 <footer class="page-footer font-big ">
   <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-    © 2023 Copyright Eran&Shivi studio
+    © 2023 Copyright Eran&Shivi studio's
 </footer>
 </body>
+<script src="calander.js"></script>
 </html>

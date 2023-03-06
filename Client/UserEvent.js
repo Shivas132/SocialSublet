@@ -32,7 +32,7 @@ await $.post('/getUserEvents', {email:email},function(data) {
 
   // Handle click event for card buttons
   $(document).on("click", "#delete", function () {
-    $(this).disabled = true;
+    $(this).prop('disabled', true);
     const cardIndex = $(this).data("card-index");
     const card = userEvents[cardIndex];
     email = localStorage.getItem("email");

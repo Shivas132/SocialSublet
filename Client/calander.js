@@ -15,13 +15,10 @@ $(document).ready(async function() {
       aspectRatio: setRatio(),
 
     eventClick: function(info) {
-
          info.jsEvent.preventDefault();
          gallery = $("#gallery");
          gallery.html("");
-         console.log(info.event.extendedProps)
-         $("#collapseInfo").collapse('hide')
-         
+         collapseAll()         
          counter = 0;
          setTimeout(() => {
           $("#cardAddress").html(info.event.extendedProps.address)
@@ -95,8 +92,9 @@ $(document).ready(async function() {
             body : formData
         })
         .then((data)=> console.log(data))
-        .then(()=> location.reload() )
-  
+        .then(collapseAll())
+        .then($("#added").collapse('show'))
+        .then(setTimeout(() => {location.reload();}, 1500))
       })
 
       $(function() {
@@ -108,9 +106,30 @@ $(document).ready(async function() {
           $("#endDate" ).datepicker({
               dateFormat: "yy-mm-dd"
           });
-      });    
+      });   
+      $("#userEvents").click(function(){
+        email = localStorage.getItem("email");
+        console.log("email = " ,email);
+        $.ajax({
+            method: "POST",
+            url: "/getUserProfile",
+            data: { email: email},
+            success: function(response){
+              //if request if made successfully then the response represent the data
+              if(response){
+                window.open("/UserEvent.html",'_blank');
+              }
+              else{
+                alert("Wrong password or email");
+              }   
+          }
+          });
+    });
   });
   
+  function showAdded(){
+    $("#added").collapse('show')
+  }
   function changeDateFormat(dateObj){
     day = dateObj.getDate()
     month = dateObj.getMonth() +1
