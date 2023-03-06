@@ -37,45 +37,41 @@ app.get('/',function(req,res){
   res.sendFile(path.join(__dirname, 'Client', 'Login.html'))
   });
   
-  app.get('/SignUp',function(req,res){
-    console.log("request for signup");
-    res.sendFile(path.join(__dirname+'/Client/Register.html'));
-  });
+app.get('/SignUp',function(req,res){
+  console.log("request for signup");
+  res.sendFile(path.join(__dirname+'/Client/Register.html'));
+});
   
-  app.post('/RegiserToHome' , function(req, res){
-    console.log("try insert User to database")
-    console.log(req.body);
+app.post('/RegiserToHome' , function(req, res){
+  console.log("try insert User to database")
+  console.log(req.body);
 
-    firebaseAuth.createUserWithEmailAndPassword(auth , req.body.UserEmail, req.body.UserPassword).then(()=>{
-      console.log("insert User to database")
-      res.sendFile(path.join(__dirname, 'Client', 'Home.html'))})
-    .catch(function(error) {
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    console.log(error);
-    res.send(false);
-    });
+  firebaseAuth.createUserWithEmailAndPassword(auth , req.body.UserEmail, req.body.UserPassword).then(()=>{
+    console.log("insert User to database")
+    res.sendFile(path.join(__dirname, 'Client', 'Home.html'))})
+  .catch(function(error) {
+  var errorCode = error.code;
+  var errorMessage = error.message;
+  console.log(error);
+  res.send(false);
   });
+});
 
-  app.post('/Home', function(req, res) { 
-    firebaseAuth.signInWithEmailAndPassword(auth, req.body.UserEmail, req.body.UserPassword)
-      .then((userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        const userEmail = user.email;
-        res.sendFile(path.join(__dirname, 'Client', 'Home.html'))
-      })
-      .catch((error) => {
-        console.log("error");
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        res.send(false);
-      });
- });
-
- 
-
-
+app.post('/Home', function(req, res) { 
+firebaseAuth.signInWithEmailAndPassword(auth, req.body.UserEmail, req.body.UserPassword)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    const userEmail = user.email;
+    res.sendFile(path.join(__dirname, 'Client', 'Home.html'))
+  })
+  .catch((error) => {
+    console.log("error");
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    res.send(false);
+  });
+});
 
  app.post('/addEvent', async function(req, res) { 
 
@@ -89,24 +85,15 @@ app.get('/',function(req,res){
       return res.status(500).send('Error parsing form data.');
     }
     EventFields = fields;
-
     // Upload each file to Firestore Storage
     counter = 1;
-    // dateForFile = currentDate.getDate() + "-" + currentDate.getMonth();
-    // console.log(files);
-
     const promises = Object.values(files).map((file) => {
-      console.log("name="+file.newFilename)
       let fileName = fields.email +"-"+ file.newFilename+".jpg";
       filePath = file.filepath;
       counter += 1;
-      //console.log("file name = ", fileName);
-      //console.log("file path = ", file.filepath);
       const fileUpload = bucket.file(fileName);
-
       // Create a read stream from the file path
       const readStream = require('fs').createReadStream(filePath);
-
       // Pipe the read stream to the file upload stream
       readStream.pipe(
         fileUpload.createWriteStream({
@@ -124,17 +111,14 @@ app.get('/',function(req,res){
         .file(fileName)
         .getSignedUrl({
           action: 'read',
-          expires: '03-01-2024', // An expiration date in the future
+          expires: '03-01-2024', 
         })
-        .then((url) => {
-          //console.log(`The download URL for ${fileName} is ${url[0]}.`);
-          
+        .then((url) => {          
           const tmp = {
             img_url: url[0],
             img_name : fileName
           }
           imagesArray.push(tmp)
-          //imagesArray.push(tmp);
         })
         .catch((error) => {
           console.error(`Error getting download URL for ${fileName}.`, error);
@@ -143,22 +127,18 @@ app.get('/',function(req,res){
 
     Promise.all(promises).then(() => {
       EventFields.imagesArray = imagesArray;
-      //console.log("EventFields function add image  -- > ", EventFields);
-      console.log("EventFields function updateEvent  -- > ", EventFields);
       collectionRef = db.collection('Events');
       collectionRef.add(EventFields)         
       .then((docRef) => {
         console.log(`Document written with ID: ${docRef.id}`);
         collectionRef.doc(docRef.id).update({ id : docRef.id });
+        res.send("V")
       }
       )
       .catch((error) => {
         console.error('Error adding document: ', error);
     });
-  }).then(
-    res.send("yay")
-
-  );
+  })
   });
 
   
@@ -171,7 +151,6 @@ app.get('/getEvents',async function(req,res){
     querySnapshot.forEach((doc) => {
       documents.push(doc.data());
     });
-    //console.log(documents); // array of document objects
   })
   .catch((error) => {
     console.log('Error getting documents: ', error);
@@ -179,20 +158,14 @@ app.get('/getEvents',async function(req,res){
   res.send(documents)
 });
 
-
-
-
 app.post('/getUserProfile',async function(req,res){
   const documents = [];
-  console.log(req.body);
  res.sendFile(path.join(__dirname, 'Client', 'UserEvent.html'))
   
 });
 
-
 app.post('/getUserEvents',async function(req,res){
   const documents = [];
-  // console.log(req.body);
   email = req.body.email;
   await db.collection("Events").where("email", "==" , email).get()
   .then((querySnapshot) => {
@@ -203,28 +176,20 @@ app.post('/getUserEvents',async function(req,res){
 .catch((error) => { 
     console.log("Error getting documents: ", error);
 });
-// console.log(documents);
 res.send(documents)
 
 });
 
-
 app.post('/deleteEvent',async function(req,res){
-  console.log(req.body);
-  console.log("----------------------");
-  console.log(req.body.email , " " , req.body.startDate," " ,req.body.endDate);
-  // db.collection('Events').where('email', '==', req.body.email).where('start', '==', req.body.startDate).where('end' , '==' , req.body.endDate).get()
-  
   docRec = db.collection('Events').doc(req.body.id)
   await docRec.get().then(documentSnapshot =>{
     imagesArray = documentSnapshot.get('imagesArray')
     imagesArray.forEach(img=>{
       bucket.file(img.img_name).delete()
       .then(()=>{
-        console.log(img.img_name + " deleted")
       })
       .catch((err)=>{
-        console.log(err)
+        console.log("image error : " , err)
       })
     })
   })
@@ -238,35 +203,8 @@ app.post('/deleteEvent',async function(req,res){
     console.log(err)
     res.send(false);
   })
-
- 
-  // .then(querySnapshot => {
-  //     // querySnapshot.forEach(documentSnapshot => {
-  //       console.log("x =" + querySnapshot)
-  //       querySnapshot.ref.delete();
-  //     // });
-  //   console.log("delete secssed");
-  //   res.send(true);
-  //   })
-  //   .catch(error => {
-  //     console.error('Error deleting document: ', error);
-  //     res.send(false);
-  //   });  
 });
 
-// function updateEvent(EventFields){
-// //   console.log("EventFields function updateEvent  -- > ", EventFields);
-// //   collectionRef = db.collection('Events');
-// //   collectionRef.add(EventFields)         
-// //   .then((docRef) => {
-// //     console.log(`Document written with ID: ${docRef.id}`);
-// //     collectionRef.doc(docRef.id).update({ id : docRef.id })},
-// //     )
-
-// //   .catch((error) => {
-// //     console.error('Error adding document: ', error);
-// // });
-// }
 
 app.listen(3000); 
 console.log('Running at Port 3000'); 

@@ -15,10 +15,13 @@ $(document).ready(async function() {
       aspectRatio: setRatio(),
 
     eventClick: function(info) {
+
          info.jsEvent.preventDefault();
+         gallery = $("#gallery");
+         gallery.html("");
          console.log(info.event.extendedProps)
          $("#collapseInfo").collapse('hide')
-         gallery = $("#gallery");
+         
          counter = 0;
          setTimeout(() => {
           $("#cardAddress").html(info.event.extendedProps.address)
@@ -29,23 +32,22 @@ $(document).ready(async function() {
           $("#cardInfo").html(info.event.extendedProps.messege)
           info.event.extendedProps.imagesArray.forEach((image ) => {
             if(counter == 0){
-              gallery.append("<div class=\"carousel-item active\"> <img class=\"d-block w-100\" src= \"" + image.img_url + "\"> </div>");
+              gallery.append("<div class=\"carousel-item active\"> <img id=\"img_gallery\" class=\"d-block w-100\" src= \"" + image.img_url + "\"> </div>");
               counter++;
             }
             else {
-              gallery.append("<div class=\"carousel-item \"> <img class=\"d-block w-100\" src= \"" + image.img_url+ "\" alt = \"apparment images\"> </div>");
+              gallery.append("<div class=\"carousel-item \"> <img id=\"img_gallery\" class=\"d-block w-100\" src= \"" + image.img_url+ "\" alt = \"apparment images\"> </div>");
             }
 
           });
           if(counter==0){gallery.hide()}
           else{gallery.show()}
-        }, 200);
+        }, 500);
         setTimeout(() => { $("#collapseInfo").collapse('show') }, 400);
         window.scrollTo(0, 0);
         }
     });
     calendar.render();
-    // $("#collapseInfo").collapse('show')
 
     $("#myform").submit(async function(e)    
     {
@@ -92,13 +94,8 @@ $(document).ready(async function() {
             method : "POST",
             body : formData
         })
-      
         .then((data)=> console.log(data))
-        .then(()=>{
-          $('#myform')[0].reset();
-          $('#added').collapse('show');
-          $('#collapseForm').collapse('hide')
-        })
+        .then(()=> location.reload() )
   
       })
 
@@ -138,6 +135,7 @@ function getRandomColor() {
 
   $('.carousel').carousel({
     interval: false,
+    
   });
 
   function setRatio(){
