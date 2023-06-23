@@ -1,0 +1,23 @@
+{
+  "name": "social-sublet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "move": "nodemon index.js",
+    "start": "nodemon ./index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@firebase/storage": "^0.11.1",
+    "express": "^4.18.2",
+    "firebase": "^9.17.1",
+    "firebase-admin": "^11.5.0",
+    "formidable": "^2.1.1",
+    "fullcalendar": "^6.1.4",
+    "nodemon": "^2.0.20"
+  }
+}
